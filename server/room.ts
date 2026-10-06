@@ -111,7 +111,6 @@ function defaultSettings(): RoomSettings {
     showBuzzList: true,
     showPlayerPoints: true,
     showTimer: true,
-    playBuzzSound: true,
   };
 }
 
@@ -503,7 +502,7 @@ export class RoomManager {
       return;
     }
     const settings = rawSettings as Record<string, unknown>;
-    const booleanKeys = ["oneBuzzOnly", "allowNewPlayers", "showBuzzList", "showPlayerPoints", "showTimer", "playBuzzSound"] as const;
+    const booleanKeys = ["oneBuzzOnly", "allowNewPlayers", "showBuzzList", "showPlayerPoints", "showTimer"] as const;
     for (const key of booleanKeys) {
       if (key in settings && typeof settings[key] !== "boolean") {
         this.sendError(connection, "invalid_settings", "Those settings could not be saved.");

@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 test("classic home and join screens are available", async ({ page }) => {
   await page.goto("./");
   await expect(page.getByText("The simple online buzzer system!")).toBeVisible();
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", "/buzzin/favicon.svg");
   await expect(page.getByRole("button", { name: "JOIN" })).toBeVisible();
   await expect(page.getByRole("button", { name: "HOST" })).toBeVisible();
 
@@ -32,6 +33,7 @@ test("host and player share a live one-buzz room", async ({ page, browser }) => 
 
   await player.locator(".buzzer").click();
   await expect(player.locator(".buzzer")).toHaveText("BUZZED");
+  await expect(player.getByText("Sound:", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Buzzed Players:", exact: true })).toBeVisible();
   await expect(page.getByText("Rangan", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Scores:", exact: true })).toHaveCount(0);
@@ -39,6 +41,8 @@ test("host and player share a live one-buzz room", async ({ page, browser }) => 
   await expect(page.locator(".score-label")).toContainText("4");
   await expect(page.getByRole("heading", { name: "Scores:", exact: true })).toBeVisible();
   await expect(page.locator(".scoreboard-name").first()).toHaveText("Rangan");
+  await expect(player.getByRole("heading", { name: "Scores:", exact: true })).toBeVisible();
+  await expect(player.locator(".scoreboard-name").first()).toHaveText("Rangan");
 
   await page.getByRole("button", { name: "Clear Buzzers" }).click();
   await expect(player.locator(".buzzer")).toHaveText("BUZZ");

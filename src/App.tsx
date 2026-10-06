@@ -2,7 +2,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type FormEvent,
   type KeyboardEvent as ReactKeyboardEvent,
@@ -226,37 +225,11 @@ function PlayerPage({ code }: { code: string }) {
     return { type: "join", code, nickname: intent.nickname, ...(sessionToken ? { sessionToken } : {}) };
   }, [code, intent, sessionToken]);
   const { room, viewer, error, lastMessage, send } = useRoomState(handshake);
-  const [soundOn, setSoundOn] = useState(true);
   const [fatalError, setFatalError] = useState<string | null>(null);
-  const lastBuzzSequence = useRef(0);
 
   useEffect(() => {
     if (lastMessage?.type === "error" && lastMessage.fatal) setFatalError(lastMessage.message);
   }, [lastMessage]);
-
-  useEffect(() => {
-    if (!room || !soundOn || !room.settings.playBuzzSound) return;
-    const latest = room.buzzes[room.buzzes.length - 1];
-    if (!latest || latest.sequence <= lastBuzzSequence.current) return;
-    lastBuzzSequence.current = latest.sequence;
-    try {
-      const AudioContextClass = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-      if (!AudioContextClass) return;
-      const context = new AudioContextClass();
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.frequency.value = 660;
-      oscillator.type = "square";
-      gain.gain.setValueAtTime(0.04, context.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.18);
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start();
-      oscillator.stop(context.currentTime + 0.18);
-      window.setTimeout(() => void context.close(), 300);
-    } catch {
-      // Audio is optional; browser autoplay policy must never break buzzing.
-    }
-  }, [room, soundOn]);
 
   const player = room && viewer?.playerId ? room.players.find((candidate) => candidate.id === viewer.playerId) : undefined;
   const buzz = useCallback(() => {
@@ -304,10 +277,6 @@ function PlayerPage({ code }: { code: string }) {
       <section className="player-heading">
         <p>Game Code: <strong>{code}</strong></p>
         <p>You: <strong>{intent.nickname}</strong></p>
-        <label className="sound-toggle">
-          Sound:
-          <input type="checkbox" checked={soundOn} onChange={(event) => setSoundOn(event.target.checked)} />
-        </label>
         <p className="space-note">Spacebar also works as buzzer button!</p>
         <InlineError message={error} />
       </section>
@@ -334,6 +303,9 @@ function PlayerPage({ code }: { code: string }) {
           </aside>
         )}
       </section>
+      {room && room.settings.showPlayerPoints !== false && showScoreboardForPlayers(room.players) && (
+        <Scoreboard players={room.players} className="player-scoreboard" />
+      )}
     </PageFrame>
   );
 }
@@ -401,7 +373,7 @@ function HostPage({ code }: { code: string }) {
     .filter((player): player is PlayerView => Boolean(player)) ?? [];
   const waitingPlayers = room?.players.filter((player) => !buzzedIds.has(player.id)) ?? [];
   const scorePlayers = room?.players ?? [];
-  const showScoreboard = scorePlayers.some((player) => (player.score ?? 0) !== 0);
+  const showScoreboard = showScoreboardForPlayers(scorePlayers);
 
   return (
     <PageFrame className="host-page">
@@ -523,11 +495,15 @@ function HostPlayerRow({
   );
 }
 
-function Scoreboard({ players }: { players: PlayerView[] }) {
+function showScoreboardForPlayers(players: PlayerView[]): boolean {
+  return players.some((player) => (player.score ?? 0) !== 0);
+}
+
+function Scoreboard({ players, className = "" }: { players: PlayerView[]; className?: string }) {
   const rankedPlayers = [...players].sort((left, right) => (right.score ?? 0) - (left.score ?? 0));
 
   return (
-    <aside className="scoreboard-section" aria-labelledby="scoreboard-title">
+    <aside className={`scoreboard-section ${className}`.trim()} aria-labelledby="scoreboard-title">
       <div className="scoreboard-header">
         <h2 id="scoreboard-title">Scores:</h2>
         <span>highest first</span>
@@ -590,7 +566,7 @@ function TeamRow({ team, sendAction }: { team: { id: string; name: string }; sen
 
 function SettingsOverlay({ room, close, sendAction }: { room: RoomView | null; close: () => void; sendAction: (action: HostAction) => void }) {
   if (!room) return null;
-  const toggle = (key: "oneBuzzOnly" | "allowNewPlayers" | "showBuzzList" | "showPlayerPoints" | "showTimer" | "playBuzzSound") => {
+  const toggle = (key: "oneBuzzOnly" | "allowNewPlayers" | "showBuzzList" | "showPlayerPoints" | "showTimer") => {
     sendAction({ action: "setSettings", settings: { [key]: !room.settings[key] } });
   };
   return (
@@ -604,7 +580,6 @@ function SettingsOverlay({ room, close, sendAction }: { room: RoomView | null; c
           <label><input type="checkbox" checked={room.settings.showBuzzList} onChange={() => toggle("showBuzzList")} /> Show Buzz List on Player Devices</label>
           <label><input type="checkbox" checked={room.settings.showPlayerPoints} onChange={() => toggle("showPlayerPoints")} /> Show Player Points on Player Devices</label>
           <label><input type="checkbox" checked={room.settings.showTimer} onChange={() => toggle("showTimer")} /> Show Timer on Player Devices</label>
-          <label><input type="checkbox" checked={room.settings.playBuzzSound} onChange={() => toggle("playBuzzSound")} /> Play Buzz Sound</label>
         </div>
         <div className="settings-group settings-actions">
           <h2>Game data</h2>

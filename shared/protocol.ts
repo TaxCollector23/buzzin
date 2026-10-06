@@ -39,7 +39,6 @@ export interface RoomSettings {
   showBuzzList: boolean;
   showPlayerPoints: boolean;
   showTimer: boolean;
-  playBuzzSound: boolean;
 }
 
 export interface RoomView {
@@ -67,7 +66,7 @@ export type HostAction =
   | { action: "score"; playerId: string; delta: number }
   | { action: "removePlayer"; playerId: string }
   | { action: "renamePlayer"; playerId: string; nickname: string }
-  | { action: "setSettings"; settings: Partial<Pick<RoomSettings, "oneBuzzOnly" | "allowNewPlayers" | "showBuzzList" | "showPlayerPoints" | "showTimer" | "playBuzzSound">> }
+  | { action: "setSettings"; settings: Partial<Pick<RoomSettings, "oneBuzzOnly" | "allowNewPlayers" | "showBuzzList" | "showPlayerPoints" | "showTimer">> }
   | { action: "removeAllPlayers" }
   | { action: "removeAllPoints" }
   | { action: "addTeam"; name: string }

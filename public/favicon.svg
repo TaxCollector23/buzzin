@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="BuzzIn green buzzer">
+  <defs>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#142817" flood-opacity=".35" />
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <circle cx="32" cy="34" r="24" fill="#2fc51d" stroke="#1d5b23" stroke-width="4" />
+    <path d="M35 15 21 35h10l-3 16 16-23H34Z" fill="#fff" />
+  </g>
+  <path d="M10 20a20 20 0 0 0-4 12M54 20a20 20 0 0 1 4 12" fill="none" stroke="#2fc51d" stroke-linecap="round" stroke-width="4" />
+</svg>
