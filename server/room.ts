@@ -649,6 +649,13 @@ export class RoomManager {
         status,
       };
     });
+    const visibleTimer = viewer.role === "host" || room.settings.showTimer
+      ? {
+          ...room.timer,
+          remainingMs: this.remainingMs(room),
+          ...(room.timer.running ? { startedAt: now() } : {}),
+        }
+      : { ...room.timer, remainingMs: 0, running: false, startedAt: null };
     return {
       code: room.code,
       ruleSet: room.ruleSet,
@@ -658,7 +665,7 @@ export class RoomManager {
       automaticBuzzLock: room.automaticBuzzLock,
       effectiveLocked,
       teams: [...room.teams.values()].map((team) => ({ ...team })),
-      timer: viewer.role === "host" || room.settings.showTimer ? { ...room.timer, remainingMs: this.remainingMs(room) } : { ...room.timer, remainingMs: 0, running: false, startedAt: null },
+      timer: visibleTimer,
       createdAt: room.createdAt,
       ended: room.ended,
     };
