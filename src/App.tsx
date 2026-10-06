@@ -422,6 +422,22 @@ function HostPage({ code }: { code: string }) {
         <InlineError message={error} />
       </section>
 
+      <section className="host-buzzed-section" aria-labelledby="buzzed-title">
+        <div className="host-buzzed-header">
+          <h2 id="buzzed-title">Buzzed Players:</h2>
+          <span className="host-buzzed-count">{buzzedPlayers.length} {buzzedPlayers.length === 1 ? "buzz" : "buzzes"}</span>
+        </div>
+        {buzzedPlayers.length === 0 ? (
+          <p className="empty-list">No buzzes yet.</p>
+        ) : (
+          <div className="host-buzzed-rows">
+            {buzzedPlayers.map((player, index) => (
+              <HostPlayerRow key={player.id} player={player} index={index + 1} room={room} sendAction={sendAction} />
+            ))}
+          </div>
+        )}
+      </section>
+
       <section className="host-controls" aria-label="Host controls">
         <div className="timer-box">
           <span className="timer-label">Timer:</span>
@@ -444,13 +460,7 @@ function HostPage({ code }: { code: string }) {
       <section className="players-section" aria-labelledby="players-title">
         <h1 id="players-title">Players:</h1>
         <p className="player-limit">Player Limit: 200</p>
-        <div className="player-group">
-          <h2>Buzzed Players:</h2>
-          {buzzedPlayers.length === 0 ? <p className="empty-list">No buzzed players.</p> : buzzedPlayers.map((player, index) => (
-            <HostPlayerRow key={player.id} player={player} index={index + 1} room={room} sendAction={sendAction} />
-          ))}
-        </div>
-        <div className="player-group">
+        <div className="player-group player-group-waiting">
           <h2>Not Buzzed Players:</h2>
           {waitingPlayers.length === 0 ? <p className="empty-list">No players waiting.</p> : waitingPlayers.map((player) => (
             <HostPlayerRow key={player.id} player={player} room={room} sendAction={sendAction} />
