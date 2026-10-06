@@ -7,7 +7,7 @@ function websocketUrl(): string {
   const configured = import.meta.env.VITE_BUZZIN_WS_URL?.trim();
   if (configured) return configured;
   if (window.location.hostname === "rangan.xyz" || window.location.hostname === "www.rangan.xyz") {
-    return "wss://buzzin-rangan-alt.vercel.app/api/ws";
+    return "wss://buzzin-nine.vercel.app/api/ws";
   }
   const protocol = window.location.protocol === "https:" ? "wss" : "ws";
   return `${protocol}://${window.location.host}/api/ws`;
