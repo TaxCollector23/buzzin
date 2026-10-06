@@ -565,3 +565,68 @@ button:disabled { cursor: not-allowed; opacity: .68; }
   .player-group, .players-section > h1, .player-limit, .teams-section { grid-column: 1; }
   .player-limit { margin-top: -6px; }
 }
+
+.host-buzzed-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin: 8px 0 12px;
+}
+
+.host-buzzed-layout-with-scores { grid-template-columns: minmax(0, 1fr) minmax(220px, 280px); }
+.host-buzzed-layout .host-buzzed-section { margin: 0; }
+
+.scoreboard-section {
+  border: 1px solid #aeb9c7;
+  border-radius: 4px;
+  padding: 9px 12px;
+  background: var(--surface);
+}
+
+.scoreboard-header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.scoreboard-header h2 { margin: 0; color: #354254; font-size: .88rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.scoreboard-header span { color: var(--muted); font-size: .72rem; }
+.scoreboard-list { margin: 7px 0 0; padding: 0; list-style: none; }
+.scoreboard-list li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; align-items: center; gap: 7px; border-top: 1px solid #e4e8ee; padding: 6px 0; font-size: .84rem; }
+.scoreboard-rank { color: var(--muted); font-size: .74rem; text-align: right; }
+.scoreboard-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.scoreboard-list strong { min-width: 28px; text-align: right; }
+.score-positive { color: #17733a; }
+.score-negative { color: #b42332; }
+.score-neutral { color: var(--muted); }
+
+.home-button, .btn, .choice-button, .small-control, .score-button {
+  transition: transform 100ms ease, box-shadow 100ms ease, filter 100ms ease;
+}
+
+.home-button:hover, .btn:hover, .choice-button:hover, .small-control:hover, .score-button:hover {
+  transform: translateY(-2px);
+}
+
+.home-button:active, .btn:active, .choice-button:active, .small-control:active, .score-button:active {
+  transform: translateY(2px);
+}
+
+.buzzer:not(:disabled) {
+  transition: transform 100ms ease, box-shadow 100ms ease, filter 100ms ease;
+}
+
+.buzzer:not(:disabled):hover {
+  transform: translateY(-4px);
+  filter: brightness(1.02);
+}
+
+.buzzer:not(:disabled):active {
+  transform: translateY(5px) scale(.985);
+  box-shadow: 0 1px 4px rgba(27, 38, 54, .28);
+}
+
+@media (max-width: 720px) {
+  .host-buzzed-layout-with-scores { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-button, .btn, .choice-button, .small-control, .score-button, .buzzer:not(:disabled) {
+    transition: none;
+  }
+}

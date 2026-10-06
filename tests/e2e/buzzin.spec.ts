@@ -34,8 +34,11 @@ test("host and player share a live one-buzz room", async ({ page, browser }) => 
   await expect(player.locator(".buzzer")).toHaveText("BUZZED");
   await expect(page.getByRole("heading", { name: "Buzzed Players:", exact: true })).toBeVisible();
   await expect(page.getByText("Rangan", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Scores:", exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "+4", exact: true }).click();
   await expect(page.locator(".score-label")).toContainText("4");
+  await expect(page.getByRole("heading", { name: "Scores:", exact: true })).toBeVisible();
+  await expect(page.locator(".scoreboard-name").first()).toHaveText("Rangan");
 
   await page.getByRole("button", { name: "Clear Buzzers" }).click();
   await expect(player.locator(".buzzer")).toHaveText("BUZZ");

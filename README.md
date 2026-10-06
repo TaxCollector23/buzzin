@@ -1,6 +1,6 @@
 # BuzzIn
 
-BuzzIn is a realtime online buzzer system based on the classic pre-2026 BuzzIn.live interface. It keeps the simple Bootstrap-era layout, large circular player buzzer, host controls, and old-style settings while using a server-authoritative WebSocket room.
+BuzzIn is a realtime online buzzer system based on the classic pre-2026 BuzzIn interface. It keeps the simple Bootstrap-era layout, large circular player buzzer, host controls, and old-style settings while using a server-authoritative WebSocket room.
 
 ## Development
 

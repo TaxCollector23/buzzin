@@ -62,8 +62,8 @@ function cleanNickname(value: string): string {
 function Brand({ subtitle = false }: { subtitle?: boolean }) {
   return (
     <header className="brand-block">
-      <button className="brand-button" onClick={() => go("/")} aria-label="BuzzIn.live home">
-        Buzz<span className="brand-italic">In</span>.live
+      <button className="brand-button" onClick={() => go("/")} aria-label="BuzzIn home">
+        Buzz<span className="brand-italic">In</span>
       </button>
       {subtitle && <p className="brand-subtitle">The simple online buzzer system!</p>}
     </header>
@@ -407,6 +407,8 @@ function HostPage({ code }: { code: string }) {
     .map((buzz) => room.players.find((player) => player.id === buzz.playerId))
     .filter((player): player is PlayerView => Boolean(player)) ?? [];
   const waitingPlayers = room?.players.filter((player) => !buzzedIds.has(player.id)) ?? [];
+  const scorePlayers = room?.players ?? [];
+  const showScoreboard = scorePlayers.some((player) => (player.score ?? 0) !== 0);
 
   return (
     <PageFrame className="host-page">
@@ -422,21 +424,24 @@ function HostPage({ code }: { code: string }) {
         <InlineError message={error} />
       </section>
 
-      <section className="host-buzzed-section" aria-labelledby="buzzed-title">
-        <div className="host-buzzed-header">
-          <h2 id="buzzed-title">Buzzed Players:</h2>
-          <span className="host-buzzed-count">{buzzedPlayers.length} {buzzedPlayers.length === 1 ? "buzz" : "buzzes"}</span>
-        </div>
-        {buzzedPlayers.length === 0 ? (
-          <p className="empty-list">No buzzes yet.</p>
-        ) : (
-          <div className="host-buzzed-rows">
-            {buzzedPlayers.map((player, index) => (
-              <HostPlayerRow key={player.id} player={player} index={index + 1} room={room} sendAction={sendAction} />
-            ))}
+      <div className={`host-buzzed-layout ${showScoreboard ? "host-buzzed-layout-with-scores" : ""}`}>
+        <section className="host-buzzed-section" aria-labelledby="buzzed-title">
+          <div className="host-buzzed-header">
+            <h2 id="buzzed-title">Buzzed Players:</h2>
+            <span className="host-buzzed-count">{buzzedPlayers.length} {buzzedPlayers.length === 1 ? "buzz" : "buzzes"}</span>
           </div>
-        )}
-      </section>
+          {buzzedPlayers.length === 0 ? (
+            <p className="empty-list">No buzzes yet.</p>
+          ) : (
+            <div className="host-buzzed-rows">
+              {buzzedPlayers.map((player, index) => (
+                <HostPlayerRow key={player.id} player={player} index={index + 1} room={room} sendAction={sendAction} />
+              ))}
+            </div>
+          )}
+        </section>
+        {showScoreboard && <Scoreboard players={scorePlayers} />}
+      </div>
 
       <section className="host-controls" aria-label="Host controls">
         <div className="timer-box">
@@ -523,6 +528,33 @@ function HostPlayerRow({
         </label>
       </div>
     </div>
+  );
+}
+
+function Scoreboard({ players }: { players: PlayerView[] }) {
+  const rankedPlayers = [...players].sort((left, right) => (right.score ?? 0) - (left.score ?? 0));
+
+  return (
+    <aside className="scoreboard-section" aria-labelledby="scoreboard-title">
+      <div className="scoreboard-header">
+        <h2 id="scoreboard-title">Scores:</h2>
+        <span>highest first</span>
+      </div>
+      <ol className="scoreboard-list">
+        {rankedPlayers.map((player, index) => {
+          const score = player.score ?? 0;
+          return (
+            <li key={player.id}>
+              <span className="scoreboard-rank">{index + 1}</span>
+              <span className="scoreboard-name">{player.nickname}</span>
+              <strong className={score > 0 ? "score-positive" : score < 0 ? "score-negative" : "score-neutral"}>
+                {score > 0 ? `+${score}` : score}
+              </strong>
+            </li>
+          );
+        })}
+      </ol>
+    </aside>
   );
 }
 
