@@ -78,11 +78,6 @@ function InlineError({ message }: { message: string | null | undefined }) {
   return message ? <p className="inline-error" role="alert">{message}</p> : null;
 }
 
-function StatusLine({ status }: { status: "connecting" | "connected" | "disconnected" }) {
-  const label = status === "connected" ? "Connected" : status === "connecting" ? "Connecting…" : "Waiting for connection…";
-  return <p className={`connection-line connection-${status}`}>{label}</p>;
-}
-
 function HomePage() {
   return (
     <PageFrame className="home-page">
@@ -189,7 +184,6 @@ function CreatePage() {
           {creating === "prelim" ? "Creating…" : "Prelim Rules"}
         </button>
         <InlineError message={error} />
-        <StatusLine status={status} />
       </section>
     </PageFrame>
   );
@@ -231,7 +225,7 @@ function PlayerPage({ code }: { code: string }) {
     if (!intent) return null;
     return { type: "join", code, nickname: intent.nickname, ...(sessionToken ? { sessionToken } : {}) };
   }, [code, intent, sessionToken]);
-  const { room, viewer, status: connectionStatus, error, lastMessage, send } = useRoomState(handshake);
+  const { room, viewer, error, lastMessage, send } = useRoomState(handshake);
   const [soundOn, setSoundOn] = useState(true);
   const [fatalError, setFatalError] = useState<string | null>(null);
   const lastBuzzSequence = useRef(0);
@@ -315,7 +309,6 @@ function PlayerPage({ code }: { code: string }) {
           <input type="checkbox" checked={soundOn} onChange={(event) => setSoundOn(event.target.checked)} />
         </label>
         <p className="space-note">Spacebar also works as buzzer button!</p>
-        <StatusLine status={connectionStatus} />
         <InlineError message={error} />
       </section>
       <section className="player-layout">
@@ -348,7 +341,7 @@ function PlayerPage({ code }: { code: string }) {
 function HostPage({ code }: { code: string }) {
   const hostToken = useMemo(() => getHostToken(code), [code]);
   const handshake = useMemo<ClientMessage | null>(() => hostToken ? { type: "hostConnect", code, hostToken } : null, [code, hostToken]);
-  const { room, status, error, lastMessage, send } = useRoomState(handshake);
+  const { room, error, lastMessage, send } = useRoomState(handshake);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [fatalError, setFatalError] = useState<string | null>(null);
@@ -420,7 +413,6 @@ function HostPage({ code }: { code: string }) {
           <button className="btn btn-outline" onClick={() => setHelpOpen(true)}>How To Info ?</button>
         </div>
         <p className="host-mode">{room?.ruleSet === "playoff" ? "Playoff Rules" : "Prelim Rules"}</p>
-        <StatusLine status={status} />
         <InlineError message={error} />
       </section>
 
