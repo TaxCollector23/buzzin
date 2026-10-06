@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "functions": {
+    "api/ws.ts": {
+      "maxDuration": 300
+    }
+  },
+  "rewrites": [
+    { "source": "/buzzin", "destination": "/index.html" },
+    { "source": "/buzzin/:path*", "destination": "/:path*" },
+    { "source": "/join", "destination": "/index.html" },
+    { "source": "/create", "destination": "/index.html" },
+    { "source": "/host/:path*", "destination": "/index.html" },
+    { "source": "/play/:path*", "destination": "/index.html" }
+  ]
+}
