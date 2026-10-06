@@ -1,7 +1,7 @@
 import http, { type IncomingMessage, type Server } from "node:http";
 import { randomUUID } from "node:crypto";
 import { WebSocketServer, WebSocket, type VerifyClientCallbackSync } from "ws";
-import { RoomManager, type SocketConnection } from "./room";
+import { RoomManager, type SocketConnection } from "./room.js";
 
 const MAX_PAYLOAD = 8 * 1024;
 

@@ -12,8 +12,8 @@ import type {
   TeamView,
   TimerView,
   Viewer,
-} from "../shared/protocol";
-import { isRuleSet, scoreValuesForRuleSet } from "../shared/protocol";
+} from "../shared/protocol.js";
+import { isRuleSet, scoreValuesForRuleSet } from "../shared/protocol.js";
 
 const ROOM_EXPIRY_MS = 6 * 60 * 60 * 1000;
 const MAX_PLAYERS = 200;

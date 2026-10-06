@@ -10,6 +10,7 @@
   },
   "rewrites": [
     { "source": "/buzzin", "destination": "/index.html" },
+    { "source": "/buzzin/", "destination": "/index.html" },
     { "source": "/buzzin/:path*", "destination": "/:path*" },
     { "source": "/join", "destination": "/index.html" },
     { "source": "/create", "destination": "/index.html" },
